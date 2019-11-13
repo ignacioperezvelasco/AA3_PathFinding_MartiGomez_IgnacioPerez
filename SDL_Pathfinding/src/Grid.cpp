@@ -21,7 +21,7 @@ Grid::Grid(char* filename)
 		terrain.push_back(terrain_row);
 	}
 	SDL_assert(terrain.size() == num_cell_y);
-	infile.close();
+	infile.close();	
 }
 
 Grid::~Grid()

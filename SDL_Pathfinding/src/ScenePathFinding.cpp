@@ -17,6 +17,7 @@ ScenePathFinding::ScenePathFinding()
 	agent->setTarget(Vector2D(-20, -20));
 	agents.push_back(agent);
 
+
 	// set agent position coords to the center of a random cell
 	Vector2D rand_cell(-1, -1);
 	while (!maze->isValidCell(rand_cell))
@@ -26,7 +27,10 @@ ScenePathFinding::ScenePathFinding()
 	// set the coin in a random cell (but at least 3 cells far from the agent)
 	coinPosition = Vector2D(-1, -1);
 	while ((!maze->isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell) < 3))
+	{
 		coinPosition = Vector2D((float)(rand() % maze->getNumCellX()), (float)(rand() % maze->getNumCellY()));
+		std::cout << "I'm in bitch" << std::endl;
+	}
 
 }
 
@@ -46,28 +50,24 @@ ScenePathFinding::~ScenePathFinding()
 void ScenePathFinding::update(float dtime, SDL_Event *event)
 {
 	/* Keyboard & Mouse events */
-	/*
+	
 	switch (event->type) {
 	case SDL_KEYDOWN:
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			draw_grid = !draw_grid;
-		break;
-	case SDL_MOUSEMOTION:
-	case SDL_MOUSEBUTTONDOWN:
-		if (event->button.button == SDL_BUTTON_LEFT)
-		{
-			Vector2D cell = maze->pix2cell(Vector2D((float)(event->button.x), (float)(event->button.y)));
-			if (maze->isValidCell(cell)) {
-				agents[0]->addPathPoint(maze->cell2pix(cell));
-			}
-		}
+		if (event->key.keysym.scancode == SDL_SCANCODE_B)
+			pathType = BFS;
+		if (event->key.keysym.scancode == SDL_SCANCODE_G)
+			pathType = GBFS;
+		if (event->key.keysym.scancode == SDL_SCANCODE_A)
+			pathType = ASTAR;
+		if (event->key.keysym.scancode == SDL_SCANCODE_A)
+			pathType = DIJKSTRA;
 		break;
 	default:
 		break;
 	}
-	*/
 	agents[0]->update(dtime, event);
-
 	// if we have arrived to the coin, replace it in a random cell!
 	if ((agents[0]->getCurrentTargetIndex() == -1) && (maze->pix2cell(agents[0]->getPosition()) == coinPosition))
 	{

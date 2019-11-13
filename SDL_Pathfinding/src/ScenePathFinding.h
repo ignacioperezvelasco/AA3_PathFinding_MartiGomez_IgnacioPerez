@@ -20,6 +20,10 @@ public:
 	void draw();
 	const char* getTitle();
 private:
+	
+	enum pathFindingType { BFS, DIJKSTRA, GBFS, ASTAR, NONE };
+	pathFindingType pathType;
+
 	std::vector<Agent*> agents;
 	Vector2D coinPosition;
 
