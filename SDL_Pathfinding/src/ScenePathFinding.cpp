@@ -2,7 +2,8 @@
 
 using namespace std;
 
-ScenePathFinding::ScenePathFinding()
+ScenePathFinding::ScenePathFinding():
+	pathType(NONE)
 {
 	draw_grid = false;
 	maze = new Grid("../res/maze.csv");
@@ -61,13 +62,13 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 			pathType = GBFS;
 		if (event->key.keysym.scancode == SDL_SCANCODE_A)
 			pathType = ASTAR;
-		if (event->key.keysym.scancode == SDL_SCANCODE_A)
+		if (event->key.keysym.scancode == SDL_SCANCODE_D)
 			pathType = DIJKSTRA;
 		break;
 	default:
 		break;
 	}
-	agents[0]->update(dtime, event);
+	agents[0]->update(dtime, event, pathType);
 	// if we have arrived to the coin, replace it in a random cell!
 	if ((agents[0]->getCurrentTargetIndex() == -1) && (maze->pix2cell(agents[0]->getPosition()) == coinPosition))
 	{

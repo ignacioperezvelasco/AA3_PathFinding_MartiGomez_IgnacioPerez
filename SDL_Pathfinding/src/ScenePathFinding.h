@@ -9,6 +9,7 @@
 #include "Seek.h"
 #include "PathFollowing.h"
 #include "Grid.h"
+#include "utils.h"
 
 class ScenePathFinding :
 	public Scene
@@ -21,7 +22,6 @@ public:
 	const char* getTitle();
 private:
 
-	enum pathFindingType { BFS, DIJKSTRA, GBFS, ASTAR, NONE };
 	pathFindingType pathType;
 
 	std::vector<Agent*> agents;

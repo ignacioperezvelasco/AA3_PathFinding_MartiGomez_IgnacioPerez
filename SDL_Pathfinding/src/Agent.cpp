@@ -14,7 +14,8 @@ Agent::Agent() : sprite_texture(0),
 				 sprite_num_frames(0),
 	             sprite_w(0),
 	             sprite_h(0),
-	             draw_sprite(false)
+	             draw_sprite(false),
+				 pathDefined(false)
 {
 }
 
@@ -105,7 +106,57 @@ void Agent::update(float dtime, SDL_Event *event)
 	if (position.y > TheApp::Instance()->getWinSize().y) position.y = 0;
 }
 
+void Agent::update(float dtime, SDL_Event* event, pathFindingType pathT)
+{
 
+	//cout << "agent update:" << endl;
+
+	switch (event->type) {
+		/* Keyboard & Mouse events */
+	case SDL_KEYDOWN:
+		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
+			draw_sprite = !draw_sprite;
+		break;
+	default:
+		break;
+	}
+
+	if (!pathDefined)
+	{
+		switch (pathT)
+		{
+		case BFS:
+			cout << "BFS" << endl;
+			break;
+		case DIJKSTRA:
+			cout << "DIJKSTRA" << endl;
+			break;
+		case GBFS:
+			cout << "GBFS" << endl;
+			break;
+		case ASTAR:
+			cout << "ASTAR" << endl;
+			break;
+		case NONE:
+			break;
+		default:
+			break;
+		}
+	}
+
+	// Apply the steering behavior
+	steering_behaviour->applySteeringForce(this, dtime);
+
+	// Update orientation
+	if (velocity.Length())
+		orientation = (float)(atan2(velocity.y, velocity.x) * RAD2DEG);
+
+	// Trim position values to window size
+	if (position.x < 0) position.x = TheApp::Instance()->getWinSize().x;
+	if (position.y < 0) position.y = TheApp::Instance()->getWinSize().y;
+	if (position.x > TheApp::Instance()->getWinSize().x) position.x = 0;
+	if (position.y > TheApp::Instance()->getWinSize().y) position.y = 0;
+}
 void Agent::addPathPoint(Vector2D point)
 {
 	if (path.points.size() > 0)
@@ -114,7 +165,6 @@ void Agent::addPathPoint(Vector2D point)
 
 	path.points.push_back(point);
 }
-
 
 int Agent::getCurrentTargetIndex()
 {

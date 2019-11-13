@@ -2,6 +2,9 @@
 #include <string>
 #include <SDL.h>
 
+
+enum pathFindingType { BFS, DIJKSTRA, GBFS, ASTAR, NONE };
+
 /* Get the resource path for resources located in res/subDir */
 std::string getResourcePath(const std::string &subDir = "");
 

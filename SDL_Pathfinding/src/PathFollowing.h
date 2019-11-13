@@ -6,6 +6,7 @@ class PathFollowing :
 	public Agent::SteeringBehavior
 {
 public:
+	enum pathFindingType { BFS, DIJKSTRA, GBFS, ASTAR, NONE };
 	PathFollowing();
 	~PathFollowing();
 	void applySteeringForce(Agent *agent, float dtime);

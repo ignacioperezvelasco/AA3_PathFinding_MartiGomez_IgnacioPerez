@@ -20,6 +20,8 @@ public:
 		virtual void applySteeringForce(Agent *agent, float dtime) {};
 	};
 private:
+	bool pathDefined;
+
 	SteeringBehavior *steering_behaviour;
 	Vector2D position;
 	Vector2D velocity;
@@ -60,6 +62,7 @@ public:
 	Vector2D getPathPoint(int idx);
 	void clearPath();
 	void update(float dtime, SDL_Event *event);
+	void update(float dtime, SDL_Event* event, pathFindingType pathT);
 	void draw();
 	bool Agent::loadSpriteTexture(char* filename, int num_frames=1);
 	
