@@ -1,4 +1,5 @@
 #include "ScenePathFindingMouse.h"
+
 using namespace std;
 
 ScenePathFindingMouse::ScenePathFindingMouse()
@@ -111,21 +112,21 @@ void ScenePathFindingMouse::drawMaze()
 	{
 		for (int i = 0; i < maze->getNumCellX(); i++)
 		{		
-			if (!maze->isValidCell(Vector2D((float)j, (float)i)))
+			if (!maze->isValidCell(Vector2D((float)i, (float)j)))
 			{
 				SDL_SetRenderDrawColor(TheApp::Instance()->getRenderer(), 0, 0, 255, 255);
+				coords = maze->cell2pix(Vector2D((float)i, (float)j)) - Vector2D((float)CELL_SIZE / 2, (float)CELL_SIZE / 2);
+				rect = { (int)coords.x, (int)coords.y, CELL_SIZE, CELL_SIZE };
+				SDL_RenderFillRect(TheApp::Instance()->getRenderer(), &rect);
 			} else {
 				// Do not draw if it is not necessary (bg is already black)
 			}
-
-			coords = maze->cell2pix(Vector2D((float)i,(float)j)) - Vector2D( (float)CELL_SIZE/2, (float)CELL_SIZE/2 );
-			rect = { (int)coords.x, (int)coords.y, CELL_SIZE, CELL_SIZE };
-			SDL_RenderFillRect(TheApp::Instance()->getRenderer(), &rect);
+					
 			
 		}
 	}
 	//Alternative: render a backgroud texture:
-	SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL );
+	//SDL_RenderCopy(TheApp::Instance()->getRenderer(), background_texture, NULL, NULL );
 }
 
 void ScenePathFindingMouse::drawCoin()

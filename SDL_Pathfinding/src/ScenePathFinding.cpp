@@ -11,7 +11,7 @@ ScenePathFinding::ScenePathFinding()
 
 	srand((unsigned int)time(NULL));
 
-	Agent *agent = new Agent;
+	Agent* agent = new Agent;
 	agent->loadSpriteTexture("../res/soldier.png", 4);
 	agent->setBehavior(new PathFollowing);
 	agent->setTarget(Vector2D(-20, -20));
@@ -47,10 +47,10 @@ ScenePathFinding::~ScenePathFinding()
 	}
 }
 
-void ScenePathFinding::update(float dtime, SDL_Event *event)
+void ScenePathFinding::update(float dtime, SDL_Event* event)
 {
 	/* Keyboard & Mouse events */
-	
+
 	switch (event->type) {
 	case SDL_KEYDOWN:
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
@@ -141,7 +141,7 @@ void ScenePathFinding::drawCoin()
 
 bool ScenePathFinding::loadTextures(char* filename_bg, char* filename_coin)
 {
-	SDL_Surface *image = IMG_Load(filename_bg);
+	SDL_Surface* image = IMG_Load(filename_bg);
 	if (!image) {
 		cout << "IMG_Load: " << IMG_GetError() << endl;
 		return false;

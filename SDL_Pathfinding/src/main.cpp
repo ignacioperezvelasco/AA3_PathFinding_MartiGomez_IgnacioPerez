@@ -1,10 +1,9 @@
 #include <iostream>
 #include <SDL.h>
 #include <SDL_image.h>
-
+#include "ScenePathFinding.h"
 #include "SDL_SimpleApp.h"
 #include "ScenePathFindingMouse.h"
-#include "ScenePathFinding.h"
 
 using namespace std;
 
