@@ -16,9 +16,9 @@ private:
 	int num_cell_x;
 	int num_cell_y;
 
-	std::vector< std::vector<int> > terrain;
 
 public:
+	std::vector< std::vector<int> > terrain;
 	Vector2D cell2pix(Vector2D cell);
 	Vector2D pix2cell(Vector2D pix);
 	bool isValidCell(Vector2D cell);

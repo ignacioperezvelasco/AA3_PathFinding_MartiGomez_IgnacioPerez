@@ -119,30 +119,7 @@ void Agent::update(float dtime, SDL_Event* event, pathFindingType pathT)
 		break;
 	default:
 		break;
-	}
-
-	if (!pathDefined)
-	{
-		switch (pathT)
-		{
-		case BFS:
-			cout << "BFS" << endl;
-			break;
-		case DIJKSTRA:
-			cout << "DIJKSTRA" << endl;
-			break;
-		case GBFS:
-			cout << "GBFS" << endl;
-			break;
-		case ASTAR:
-			cout << "ASTAR" << endl;
-			break;
-		case NONE:
-			break;
-		default:
-			break;
-		}
-	}
+	}	
 
 	// Apply the steering behavior
 	steering_behaviour->applySteeringForce(this, dtime);
@@ -245,4 +222,14 @@ bool Agent::loadSpriteTexture(char* filename, int _num_frames)
 		SDL_FreeSurface(image);
 
 	return true;
+}
+
+bool Agent::getPathDefined()
+{
+	return pathDefined;
+}
+
+void Agent::setPathDefined(bool newB)
+{
+	pathDefined = newB;
 }

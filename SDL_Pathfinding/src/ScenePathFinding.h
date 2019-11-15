@@ -10,6 +10,7 @@
 #include "PathFollowing.h"
 #include "Grid.h"
 #include "utils.h"
+#include "PathFinder.h"
 
 class ScenePathFinding :
 	public Scene

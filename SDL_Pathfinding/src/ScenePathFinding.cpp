@@ -56,8 +56,9 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 	case SDL_KEYDOWN:
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
 			draw_grid = !draw_grid;
-		if (event->key.keysym.scancode == SDL_SCANCODE_B)
+		if (event->key.keysym.scancode == SDL_SCANCODE_B) {
 			pathType = BFS;
+		}
 		if (event->key.keysym.scancode == SDL_SCANCODE_G)
 			pathType = GBFS;
 		if (event->key.keysym.scancode == SDL_SCANCODE_A)
@@ -68,10 +69,43 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 	default:
 		break;
 	}
-	agents[0]->update(dtime, event, pathType);
+	if (!agents[0]->pathDefined)
+	{
+		switch (pathType)
+		{
+		case BFS:
+			cout << "BFS" << endl;
+			BFSFunction(agents[0], maze);
+			agents[0]->pathDefined = true;
+			break;
+		case DIJKSTRA:
+			cout << "DIJKSTRA" << endl;
+			DIJKSTRAFunction(agents[0], maze);
+			agents[0]->pathDefined = true;
+			break;
+		case GBFS:
+			cout << "GBFS" << endl;
+			GBFSFunction(agents[0], maze);
+			agents[0]->pathDefined = true;
+			break;
+		case ASTAR:
+			cout << "ASTAR" << endl;
+			ASTARFunction(agents[0], maze);
+			agents[0]->pathDefined = true;
+			break;
+		case NONE:
+			break;
+		default:
+			break;
+		}
+	}
+
+	agents[0]->update(dtime, event);
+	
 	// if we have arrived to the coin, replace it in a random cell!
 	if ((agents[0]->getCurrentTargetIndex() == -1) && (maze->pix2cell(agents[0]->getPosition()) == coinPosition))
 	{
+		agents[0]->pathDefined = false;
 		coinPosition = Vector2D(-1, -1);
 		while ((!maze->isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, maze->pix2cell(agents[0]->getPosition())) < 3))
 			coinPosition = Vector2D((float)(rand() % maze->getNumCellX()), (float)(rand() % maze->getNumCellY()));
