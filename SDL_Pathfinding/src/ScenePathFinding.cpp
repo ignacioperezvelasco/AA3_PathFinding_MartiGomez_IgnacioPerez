@@ -75,22 +75,22 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 		{
 		case BFS:
 			cout << "BFS" << endl;
-			BFSFunction(agents[0], maze);
+			BFSFunction(agents[0], maze, coinPosition);
 			agents[0]->pathDefined = true;
 			break;
 		case DIJKSTRA:
 			cout << "DIJKSTRA" << endl;
-			DIJKSTRAFunction(agents[0], maze);
+			DIJKSTRAFunction(agents[0], maze, coinPosition);
 			agents[0]->pathDefined = true;
 			break;
 		case GBFS:
 			cout << "GBFS" << endl;
-			GBFSFunction(agents[0], maze);
+			GBFSFunction(agents[0], maze, coinPosition);
 			agents[0]->pathDefined = true;
 			break;
 		case ASTAR:
 			cout << "ASTAR" << endl;
-			ASTARFunction(agents[0], maze);
+			ASTARFunction(agents[0], maze, coinPosition);
 			agents[0]->pathDefined = true;
 			break;
 		case NONE:
@@ -101,7 +101,7 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 	}
 
 	agents[0]->update(dtime, event);
-	
+	cout << agents[0]->getPosition().x << " " << agents[0]->getPosition().y << endl;
 	// if we have arrived to the coin, replace it in a random cell!
 	if ((agents[0]->getCurrentTargetIndex() == -1) && (maze->pix2cell(agents[0]->getPosition()) == coinPosition))
 	{
