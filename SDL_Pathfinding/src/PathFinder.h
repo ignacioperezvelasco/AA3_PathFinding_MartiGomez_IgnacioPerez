@@ -22,3 +22,4 @@ void BFSFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition);
 void GBFSFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition);
 void DIJKSTRAFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition);
 void ASTARFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition);
+void findNeighbors(pair ubication, int maxX, int maxY);
