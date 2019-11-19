@@ -155,21 +155,14 @@ void GBFSFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 					{
 						if (((neighBors + i)->NumColumn == t->NumColumn) && ((neighBors + i)->NumRow == t->NumRow))
 						{
-							existsToVisit = true;
-							//Check if the cost is lower
-							if ((current.costTill + getCostBetweenNodes(pairs{ current.NumColumn,current.NumRow }, pairs{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow }, myGrid)) < t->costTill)
-							{
-								//change the existing with the new cost and camefrom
-								t->costTill = (current.costTill + getCostBetweenNodes(pairs{ current.NumColumn,current.NumRow }, pairs{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow }, myGrid));
-								t->came_from = pairs{ current.NumColumn,current.NumRow };
-							}
+							existsToVisit = true;							
 						}
 					}
 				}
 				//if its not in any queue
 				if ((!existsToVisit) && (!exists))
 				{
-					frontier.push_back(node{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow,pairs { current.NumColumn,current.NumRow },current.costTill + getCostBetweenNodes(pairs{ current.NumColumn,current.NumRow }, pairs{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow }, myGrid) });
+					frontier.push_back(node{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow,pairs { current.NumColumn,current.NumRow }, myHeuristic(pairs{(neighBors + i)->NumColumn,(neighBors + i)->NumRow},pairs{(int)coinPosition.x,(int)coinPosition.y}) });
 				}
 				//bools to false
 				exists = false;
