@@ -22,6 +22,16 @@ Grid::Grid(char* filename)
 	}
 	SDL_assert(terrain.size() == num_cell_y);
 	infile.close();
+
+	vector< vector<int> >::iterator row;
+	vector<int>::iterator col;
+
+	for (row = terrain.begin(); row != terrain.end(); row++) {
+		for (col = row->begin(); col != row->end(); col++) {
+			std::cout << *col<<" ";
+		}
+		std::cout<< std::endl;
+	}
 }
 
 Grid::~Grid()
