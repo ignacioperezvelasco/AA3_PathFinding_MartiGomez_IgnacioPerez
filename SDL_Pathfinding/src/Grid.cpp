@@ -65,3 +65,4 @@ bool Grid::isValidCell(Vector2D cell)
 		return false;
 	return !(terrain[(unsigned int)cell.y][(unsigned int)cell.x] == 0);
 }
+

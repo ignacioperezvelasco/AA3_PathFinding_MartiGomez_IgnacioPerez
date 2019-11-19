@@ -26,4 +26,5 @@ void ASTARFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition);
 void findNeighbors(pairs ubication, pairs* neighborhood, int maxX, int maxY, Grid* myGrid);
 void addPath(Agent* myAgent, std::vector<node> visitedNodes, Grid* myGrid);
 node getLowestCostTill(std::deque<node> frontier);
-int getCostBetweenNodes(pairs nodeA, pairs nodeB);
+int getCostBetweenNodes(pairs nodeA, pairs nodeB, Grid* myGrid);
+int myHeuristic(pairs nodeA, pairs nodeB);
