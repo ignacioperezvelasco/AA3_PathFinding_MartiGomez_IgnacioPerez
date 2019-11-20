@@ -3,14 +3,31 @@
 using namespace std;
 
 ScenePathFinding::ScenePathFinding():
-	pathType(NONE)
+	pathType(NONE),
+	counter(0),
+	minV(0),
+	maxV(0),
+	mediumV(0),
+	aux(0)
 {
+	//Initialize coinPoints to have the same paths
+	coinPoints[0] = pairs{20,5};
+	coinPoints[1] = pairs{ 13,6 };
+	coinPoints[2] = pairs{ 7,4 };
+	coinPoints[3] = pairs{ 20,10 };
+	coinPoints[4] = pairs{ 35,5 };
+	coinPoints[5] = pairs{ 32,13 };
+	coinPoints[6] = pairs{ 10,20 };
+	coinPoints[7] = pairs{ 3,17 };
+	coinPoints[8] = pairs{ 8,15 };
+	coinPoints[9] = pairs{ 3,5 };
+
 	draw_grid = true;
 	maze = new Grid("../res/maze.csv");
 
 	loadTextures("../res/maze.png", "../res/coin.png");
 
-	srand((unsigned int)time(NULL));
+	//srand((unsigned int)time(NULL));
 
 	Agent* agent = new Agent;
 	agent->loadSpriteTexture("../res/soldier.png", 4);
@@ -23,14 +40,16 @@ ScenePathFinding::ScenePathFinding():
 	Vector2D rand_cell(-1, -1);
 	while (!maze->isValidCell(rand_cell))
 		rand_cell = Vector2D((float)(rand() % maze->getNumCellX()), (float)(rand() % maze->getNumCellY()));
-	agents[0]->setPosition(maze->cell2pix(Vector2D(3,8)));
+	agents[0]->setPosition(maze->cell2pix(Vector2D(1,1)));
 
 	// set the coin in a random cell (but at least 3 cells far from the agent)
 	coinPosition = Vector2D(-1, -1);
 	while ((!maze->isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, rand_cell) < 3))
 	{
-		coinPosition = Vector2D((float)(rand() % maze->getNumCellX()), (float)(rand() % maze->getNumCellY()));
-		std::cout << "I'm in bitch" << std::endl;
+		if (counter >= 10)
+			counter = 0;
+		coinPosition = Vector2D(coinPoints[counter].NumColumn, coinPoints[counter].NumRow);
+		//std::cout << "I'm in bitch" << std::endl;
 	}
 
 }
@@ -51,7 +70,6 @@ ScenePathFinding::~ScenePathFinding()
 void ScenePathFinding::update(float dtime, SDL_Event* event)
 {
 	/* Keyboard & Mouse events */
-
 	switch (event->type) {
 	case SDL_KEYDOWN:
 		if (event->key.keysym.scancode == SDL_SCANCODE_SPACE)
@@ -72,33 +90,87 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 	
 	if (!agents[0]->pathDefined)
 	{
-		switch (pathType)
+		if(counterPaths>=40)
+			counterPaths = 0;
+		//BFS
+		if (counterPaths < 10)
 		{
-		case BFS:
-			cout << "BFS" << endl;
-			BFSFunction(agents[0], maze, coinPosition);
+			if (counterPaths == 0)
+			{
+				minV = maxV = aux = BFSFunction(agents[0], maze, coinPosition);
+				mediumV = 0;
+			}
+			else
+				aux = BFSFunction(agents[0], maze, coinPosition);
 			agents[0]->pathDefined = true;
-			break;
-		case DIJKSTRA:
-			cout << "DIJKSTRA" << endl;
-			DIJKSTRAFunction(agents[0], maze, coinPosition);
-			agents[0]->pathDefined = true;
-			break;
-		case GBFS:
-			cout << "GBFS" << endl;
-			GBFSFunction(agents[0], maze, coinPosition);
-			agents[0]->pathDefined = true;
-			break;
-		case ASTAR:
-			cout << "ASTAR" << endl;
-			ASTARFunction(agents[0], maze, coinPosition);
-			agents[0]->pathDefined = true;
-			break;
-		case NONE:
-			break;
-		default:
-			break;
+			if (aux < minV)
+				minV = aux;
+
+			if (aux > maxV)
+				maxV = aux;
+
+			mediumV += aux;
 		}
+		//GBFS
+		else if (counterPaths < 20)
+		{
+			if (counterPaths == 10)
+			{
+				minV = maxV =aux= GBFSFunction(agents[0], maze, coinPosition);
+				mediumV = 0;
+			}
+			else
+				GBFSFunction(agents[0], maze, coinPosition);
+
+			agents[0]->pathDefined = true;
+			if (aux < minV)
+				minV = aux;
+
+			if (aux > maxV)
+				maxV = aux;
+
+			mediumV += aux;
+		}
+		//Dijkstra
+		else if (counterPaths < 30)
+		{
+
+			if (counterPaths == 30)
+			{
+				minV = maxV = aux = DIJKSTRAFunction(agents[0], maze, coinPosition);
+				mediumV = 0;
+			}
+			else
+				mediumV += DIJKSTRAFunction(agents[0], maze, coinPosition);
+			agents[0]->pathDefined = true;
+			if (aux < minV)
+				minV = aux;
+
+			if (aux > maxV)
+				maxV = aux;
+
+			mediumV += aux;
+		}
+		//A*
+		else if (counterPaths < 40)
+		{
+			if (counterPaths == 30)
+			{
+				minV = maxV = aux = ASTARFunction(agents[0], maze, coinPosition);
+				mediumV = 0;
+			}
+			else
+				ASTARFunction(agents[0], maze, coinPosition);			
+			agents[0]->pathDefined = true;
+			if (aux < minV)
+				minV = aux;
+
+			if (aux > maxV)
+				maxV = aux;
+
+			mediumV += aux;
+		}
+		
 	}
 
 	agents[0]->update(dtime, event);
@@ -106,9 +178,41 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 	if ((agents[0]->getCurrentTargetIndex() == -1) && (maze->pix2cell(agents[0]->getPosition()) == coinPosition))
 	{
 		agents[0]->pathDefined = false;
+		counter++;
+		counterPaths++;
+		if (counter >= 10)
+		{
+			counter = 0;
+			//BFS
+			if (counterPaths == 10)
+			{
+				cout << " ----BFS----" << endl;
+				cout << "Min: " << minV << " Max:" << maxV << " Mitjana:" << (mediumV / 10) << endl;
+			}
+			//GBFS
+			else if (counterPaths == 20)
+			{
+				cout << " ----GBFS----" << endl;
+				cout << "Min: " << minV << " Max:" << maxV << " Mitjana:" << (mediumV / 10) << endl;
+			}
+			//Dijkstra
+			else if (counterPaths == 30)
+			{
+				cout << " ----Dijkstra----" << endl;
+				cout << "Min: " << minV << " Max:" << maxV << " Mitjana:" << (mediumV / 10) << endl;
+			}
+			//A*
+			else if (counterPaths == 40)
+			{
+				cout << " ----A*----" << endl;
+				cout << "Min: " << minV << " Max:" << maxV << " Mitjana:" << (mediumV / 10) << endl;
+			}
+		}
 		coinPosition = Vector2D(-1, -1);
 		while ((!maze->isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, maze->pix2cell(agents[0]->getPosition())) < 3))
-			coinPosition = Vector2D((float)(rand() % maze->getNumCellX()), (float)(rand() % maze->getNumCellY()));
+			coinPosition = Vector2D(coinPoints[counter].NumColumn, coinPoints[counter].NumRow);
+		if (counterPaths % 9 == 0)
+			agents[0]->setPosition(Vector2D(maze->cell2pix(Vector2D(1,1)).x, maze->cell2pix(Vector2D(1, 1)).y));
 	}
 	
 }

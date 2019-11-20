@@ -1,6 +1,6 @@
 #include "PathFinder.h"
 
-void BFSFunction(Agent* myAgent,Grid* myGrid, Vector2D coinPosition)
+int BFSFunction(Agent* myAgent,Grid* myGrid, Vector2D coinPosition)
 {
 	//Variables/////////////////////////////
 	std::deque<node> frontier;
@@ -18,7 +18,7 @@ void BFSFunction(Agent* myAgent,Grid* myGrid, Vector2D coinPosition)
 
 	while (!frontier.empty())
 	{
-		count++;
+		
 		//actualize current node to search neighbors
 		current = frontier.front();
 		//Get neighbors
@@ -29,7 +29,7 @@ void BFSFunction(Agent* myAgent,Grid* myGrid, Vector2D coinPosition)
 			//Do the exit if it's node goal////////////////////////////
 			if (((neighBors + i)->NumColumn == (int)coinPosition.x) && ((neighBors + i)->NumRow == (int)coinPosition.y))
 			{
-				std::cout << "found with BFS!" << std::endl;
+				//std::cout << "found with BFS!" << std::endl;
 				visited.push_back(current);
 				visited.push_back(node{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow,pairs {current.NumColumn,current.NumRow} });
 				earlyExit = true;
@@ -83,19 +83,20 @@ void BFSFunction(Agent* myAgent,Grid* myGrid, Vector2D coinPosition)
 
 		//Get out node already searched
 		frontier.pop_front();
+		count++;
 		//Push visited node
 		visited.push_back(current);
 		
 	}
 
-	std::cout << count << std::endl;
+	//std::cout << count << std::endl;
 
 	//we push the path in the agent 
 	addPath(myAgent, visited, myGrid);
-
+	return count;
 }
 
-void GBFSFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
+int GBFSFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 {
 	//Variables/////////////////////////////
 	std::deque<node> frontier;
@@ -110,11 +111,10 @@ void GBFSFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 	///////////////////////////
 
 	//push first pos
-	frontier.push_back(node{ (int)myGrid->pix2cell(myAgent->getPosition()).x,(int)myGrid->pix2cell(myAgent->getPosition()).y, pairs{-1,-1}, 0 });
+	frontier.push_back(node{ (int)myGrid->pix2cell(myAgent->getPosition()).x,(int)myGrid->pix2cell(myAgent->getPosition()).y, pairs{-1,-1}, myHeuristic(pairs{(int)myGrid->pix2cell(myAgent->getPosition()).x,(int)myGrid->pix2cell(myAgent->getPosition()).y},pairs{(int)coinPosition.x,(int)coinPosition.y}) });
 
 	while (!frontier.empty())
 	{
-		count++;
 		//actualize current node to search neighbors
 		current = getLowestCostTill(frontier);;
 		//Get neighbors
@@ -125,7 +125,6 @@ void GBFSFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 			//Do the exit if it's node goal////////////////////////////
 			if (((neighBors + i)->NumColumn == (int)coinPosition.x) && ((neighBors + i)->NumRow == (int)coinPosition.y))
 			{
-				std::cout << "found with BFS!" << std::endl;
 				visited.push_back(current);
 				visited.push_back(node{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow,pairs { current.NumColumn,current.NumRow } });
 				earlyExit = true;
@@ -188,18 +187,17 @@ void GBFSFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 				indexToErase++;
 		}
 		frontier.erase(frontier.begin() + indexToErase);
+		count++;
 		//Push visited node
 		visited.push_back(current);
-
+		
 	}
-
-	std::cout << count << std::endl;
-
 	//we push the path in the agent 
 	addPath(myAgent, visited, myGrid);
+	return count;
 }
 
-void DIJKSTRAFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
+int DIJKSTRAFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 {
 	//Variables/////////////////////////////
 	std::deque<node> frontier;
@@ -214,11 +212,10 @@ void DIJKSTRAFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 	///////////////////////////
 
 	//push first pos
-	frontier.push_back(node{ (int)myGrid->pix2cell(myAgent->getPosition()).x,(int)myGrid->pix2cell(myAgent->getPosition()).y, pairs{-1,-1}, 0 });
+	frontier.push_back(node{ (int)myGrid->pix2cell(myAgent->getPosition()).x,(int)myGrid->pix2cell(myAgent->getPosition()).y, pairs{-1,-1}, 0});
 	
 	while (!frontier.empty())
 	{
-		count++;
 		//actualize current node to search neighbors
 		current = getLowestCostTill(frontier);;
 		//Get neighbors
@@ -228,8 +225,7 @@ void DIJKSTRAFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 		{
 			//Do the exit if it's node goal////////////////////////////
 			if (((neighBors + i)->NumColumn == (int)coinPosition.x) && ((neighBors + i)->NumRow == (int)coinPosition.y))
-			{
-				std::cout << "found with BFS!" << std::endl;
+			{				
 				visited.push_back(current);
 				visited.push_back(node{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow,pairs { current.NumColumn,current.NumRow } });
 				earlyExit = true;
@@ -299,24 +295,123 @@ void DIJKSTRAFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 				indexToErase++;
 		}
 		frontier.erase(frontier.begin()+indexToErase);
+		count++;
 		//Push visited node
 		visited.push_back(current);
 
 	}
 
-	std::cout << count << std::endl;
-
 	//we push the path in the agent 
 	addPath(myAgent, visited, myGrid);
+	return count;
 }
 
-void ASTARFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
+int ASTARFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 {
-	myAgent->addPathPoint(myGrid->cell2pix(Vector2D(18, 4)));
-	myAgent->addPathPoint(myGrid->cell2pix(Vector2D(18, 5)));
-	myAgent->addPathPoint(myGrid->cell2pix(Vector2D(18, 6)));
-	myAgent->addPathPoint(myGrid->cell2pix(Vector2D(18, 7)));
-	myAgent->addPathPoint(myGrid->cell2pix(Vector2D(18, 8)));
+	//Variables/////////////////////////////
+	std::deque<node> frontier;
+	std::vector<node> visited;
+	node current;
+	pairs neighBors[4];
+	bool exists = false;
+	bool existsToVisit = false;
+	bool earlyExit = false;
+	int count = 0;
+	int indexToErase = -1;
+	///////////////////////////
+
+	//push first pos
+	frontier.push_back(node{ (int)myGrid->pix2cell(myAgent->getPosition()).x,(int)myGrid->pix2cell(myAgent->getPosition()).y, pairs{-1,-1}, myHeuristic(pairs{(int)myGrid->pix2cell(myAgent->getPosition()).x,(int)myGrid->pix2cell(myAgent->getPosition()).y},pairs{(int)coinPosition.x,(int)coinPosition.y}) });
+
+	while (!frontier.empty())
+	{
+		//actualize current node to search neighbors
+		current = getLowestCostTill(frontier);;
+		//Get neighbors
+		findNeighbors(pairs{ current.NumColumn,current.NumRow }, neighBors, myGrid->getNumCellX(), myGrid->getNumCellY(), myGrid);
+		//check neighbors
+		for (int i = 0; i < 4; i++)
+		{
+			//Do the exit if it's node goal////////////////////////////
+			if (((neighBors + i)->NumColumn == (int)coinPosition.x) && ((neighBors + i)->NumRow == (int)coinPosition.y))
+			{
+				visited.push_back(current);
+				visited.push_back(node{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow,pairs { current.NumColumn,current.NumRow } });
+				earlyExit = true;
+				break;
+			}
+			///////////////////////////////////////////////////////////
+
+			//checking it exists/////////////////////////////////////////////////////////////////
+			if ((neighBors + i)->NumRow != -1)
+			{
+				//Checking it isn't visited
+				if (!visited.empty())
+				{
+					for (auto t = visited.begin(); t != visited.end(); ++t)
+					{
+						if (((neighBors + i)->NumColumn == t->NumColumn) && ((neighBors + i)->NumRow == t->NumRow))
+						{
+							exists = true;
+						}
+					}
+				}
+
+				if (!exists)
+				{
+					//Check isn't going to be visited
+					for (auto t = frontier.begin(); t != frontier.end(); ++t)
+					{
+						if (((neighBors + i)->NumColumn == t->NumColumn) && ((neighBors + i)->NumRow == t->NumRow))
+						{
+							existsToVisit = true;
+							//Check if the cost is lower
+							if (((current.costTill + getCostBetweenNodes(pairs{ current.NumColumn,current.NumRow }, pairs{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow }, myGrid)) + myHeuristic(pairs{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow }, pairs{(int)coinPosition.x,(int)coinPosition.y})) < t->costTill)
+							{
+								//change the existing with the new cost and camefrom
+								t->costTill = ((current.costTill + getCostBetweenNodes(pairs{ current.NumColumn,current.NumRow }, pairs{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow }, myGrid)) + myHeuristic(pairs{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow }, pairs{ (int)coinPosition.x,(int)coinPosition.y }));
+								t->came_from = pairs{ current.NumColumn,current.NumRow };
+							}
+						}
+					}
+				}
+				//if its not in any queue
+				if ((!existsToVisit) && (!exists))
+				{
+					frontier.push_back(node{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow,
+						pairs { current.NumColumn,current.NumRow },
+						((current.costTill + getCostBetweenNodes(pairs{ current.NumColumn,current.NumRow },	pairs{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow }, myGrid)) + myHeuristic(pairs{ (neighBors + i)->NumColumn,(neighBors + i)->NumRow }, pairs{ (int)coinPosition.x,(int)coinPosition.y })) });
+				}
+				//bools to false
+				exists = false;
+				existsToVisit = false;
+			}
+			/////////////////////////////////////////////////////////////////////////////////////
+		}
+		//if we found objective
+		if (earlyExit)
+		{
+			break;
+		}
+		indexToErase = 0;
+		//Get out node already searched
+		for (auto t = frontier.begin(); t != frontier.end(); ++t)
+		{
+			if ((current.NumRow == t->NumRow) && (current.NumColumn == t->NumColumn))
+			{
+				break;
+			}
+			else
+				indexToErase++;
+		}
+		frontier.erase(frontier.begin() + indexToErase);
+		count++;
+		//Push visited node
+		visited.push_back(current);
+	}
+	//we push the path in the agent 
+	addPath(myAgent, visited, myGrid);
+	return count;
 }
 
 void findNeighbors(pairs ubication, pairs* neighborhood, int maxX, int maxY, Grid* myGrid)

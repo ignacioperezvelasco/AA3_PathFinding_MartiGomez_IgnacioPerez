@@ -24,13 +24,21 @@ public:
 private:
 
 	pathFindingType pathType;
+	pairs coinPoints[10];
 
 	std::vector<Agent*> agents;
 	Vector2D coinPosition;
 
+	//Variables to find minMax and mitja
+	int minV;
+	int maxV;
+	int mediumV;
+	int aux;
+
 	Grid* maze;
 	bool draw_grid;
-
+	int counter;
+	int counterPaths;
 	void drawMaze();
 	void drawCoin();
 	SDL_Texture* background_texture;
