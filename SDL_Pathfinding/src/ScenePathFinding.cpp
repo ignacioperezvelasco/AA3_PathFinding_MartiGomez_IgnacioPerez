@@ -3,7 +3,7 @@
 using namespace std;
 
 ScenePathFinding::ScenePathFinding():
-	pathType(NONE),
+	pathType(BFS),
 	counter(0),
 	minV(0),
 	maxV(0),
@@ -97,6 +97,7 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 		{
 			if (counterPaths == 0)
 			{
+				pathType = BFS;
 				minV = maxV = aux = BFSFunction(agents[0], maze, coinPosition);
 				mediumV = 0;
 			}
@@ -116,13 +117,15 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 		{
 			if (counterPaths == 10)
 			{
+				pathType = GBFS;
 				minV = maxV =aux= GBFSFunction(agents[0], maze, coinPosition);
 				mediumV = 0;
 			}
 			else
-				GBFSFunction(agents[0], maze, coinPosition);
+				aux=GBFSFunction(agents[0], maze, coinPosition);
 
 			agents[0]->pathDefined = true;
+
 			if (aux < minV)
 				minV = aux;
 
@@ -135,14 +138,17 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 		else if (counterPaths < 30)
 		{
 
-			if (counterPaths == 30)
+			if (counterPaths == 20)
 			{
+				pathType = DIJKSTRA;
 				minV = maxV = aux = DIJKSTRAFunction(agents[0], maze, coinPosition);
 				mediumV = 0;
 			}
 			else
-				mediumV += DIJKSTRAFunction(agents[0], maze, coinPosition);
+				aux = DIJKSTRAFunction(agents[0], maze, coinPosition);
+
 			agents[0]->pathDefined = true;
+
 			if (aux < minV)
 				minV = aux;
 
@@ -156,11 +162,12 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 		{
 			if (counterPaths == 30)
 			{
+				pathType = ASTAR;
 				minV = maxV = aux = ASTARFunction(agents[0], maze, coinPosition);
 				mediumV = 0;
 			}
 			else
-				ASTARFunction(agents[0], maze, coinPosition);			
+				aux=ASTARFunction(agents[0], maze, coinPosition);			
 			agents[0]->pathDefined = true;
 			if (aux < minV)
 				minV = aux;
@@ -170,7 +177,7 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 
 			mediumV += aux;
 		}
-		
+		counterPaths++;
 	}
 
 	agents[0]->update(dtime, event);
@@ -179,34 +186,33 @@ void ScenePathFinding::update(float dtime, SDL_Event* event)
 	{
 		agents[0]->pathDefined = false;
 		counter++;
-		counterPaths++;
-		if (counter >= 10)
+		//cout << "Counter " << counter << " pATHc: " << counterPaths << endl;
+		if (counter == 9)
 		{
 			counter = 0;
-			//BFS
-			if (counterPaths == 10)
+			switch (pathType)
 			{
+			case BFS:
 				cout << " ----BFS----" << endl;
 				cout << "Min: " << minV << " Max:" << maxV << " Mitjana:" << (mediumV / 10) << endl;
-			}
-			//GBFS
-			else if (counterPaths == 20)
-			{
-				cout << " ----GBFS----" << endl;
-				cout << "Min: " << minV << " Max:" << maxV << " Mitjana:" << (mediumV / 10) << endl;
-			}
-			//Dijkstra
-			else if (counterPaths == 30)
-			{
+				break;
+			case DIJKSTRA:
 				cout << " ----Dijkstra----" << endl;
 				cout << "Min: " << minV << " Max:" << maxV << " Mitjana:" << (mediumV / 10) << endl;
-			}
-			//A*
-			else if (counterPaths == 40)
-			{
+				break;
+			case GBFS:
+				cout << " ----GBFS----" << endl;
+				cout << "Min: " << minV << " Max:" << maxV << " Mitjana:" << (mediumV / 10) << endl;
+				break;
+			case ASTAR:
 				cout << " ----A*----" << endl;
 				cout << "Min: " << minV << " Max:" << maxV << " Mitjana:" << (mediumV / 10) << endl;
-			}
+				break;
+			case NONE:
+				break;
+			default:
+				break;
+			}			
 		}
 		coinPosition = Vector2D(-1, -1);
 		while ((!maze->isValidCell(coinPosition)) || (Vector2D::Distance(coinPosition, maze->pix2cell(agents[0]->getPosition())) < 3))
