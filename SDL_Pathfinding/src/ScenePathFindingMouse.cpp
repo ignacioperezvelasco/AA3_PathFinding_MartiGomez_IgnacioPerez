@@ -56,7 +56,8 @@ void ScenePathFindingMouse::update(float dtime, SDL_Event *event)
 		if (event->button.button == SDL_BUTTON_LEFT)
 		{
 			Vector2D cell = maze->pix2cell(Vector2D((float)(event->button.x), (float)(event->button.y)));
-			if (maze->isValidCell(cell)) {
+			if (maze->isValidCell(cell)) 
+			{
 				agents[0]->addPathPoint(maze->cell2pix(cell));
 			}
 		}

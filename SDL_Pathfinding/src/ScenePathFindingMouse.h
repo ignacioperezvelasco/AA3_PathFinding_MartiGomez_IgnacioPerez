@@ -9,6 +9,7 @@
 #include "Seek.h"
 #include "PathFollowing.h"
 #include "Grid.h"
+#include "PathFinder.h"
 
 class ScenePathFindingMouse :
 	public Scene
@@ -25,7 +26,7 @@ private:
 
 	Grid *maze;
 	bool draw_grid;
-		
+
 	void drawMaze();
 	void drawCoin();
 	SDL_Texture *background_texture;

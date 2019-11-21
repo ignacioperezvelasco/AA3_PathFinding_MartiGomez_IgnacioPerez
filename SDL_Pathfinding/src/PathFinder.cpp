@@ -306,7 +306,7 @@ int DIJKSTRAFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 	return count;
 }
 
-int ASTARFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
+int ASTARFunction(Agent* myAgent,pairs myUbi, Grid* myGrid, Vector2D coinPosition)
 {
 	//Variables/////////////////////////////
 	std::deque<node> frontier;
@@ -321,7 +321,7 @@ int ASTARFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition)
 	///////////////////////////
 
 	//push first pos
-	frontier.push_back(node{ (int)myGrid->pix2cell(myAgent->getPosition()).x,(int)myGrid->pix2cell(myAgent->getPosition()).y, pairs{-1,-1}, myHeuristic(pairs{(int)myGrid->pix2cell(myAgent->getPosition()).x,(int)myGrid->pix2cell(myAgent->getPosition()).y},pairs{(int)coinPosition.x,(int)coinPosition.y}) });
+	frontier.push_back(node{ myUbi.NumColumn,myUbi.NumRow, pairs{-1,-1}, myHeuristic(myUbi ,pairs{(int)coinPosition.x,(int)coinPosition.y}) });
 
 	while (!frontier.empty())
 	{

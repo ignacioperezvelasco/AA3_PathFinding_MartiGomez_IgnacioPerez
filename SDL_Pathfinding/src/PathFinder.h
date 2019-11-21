@@ -22,7 +22,7 @@ struct node
 int BFSFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition);
 int GBFSFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition);
 int DIJKSTRAFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition);
-int ASTARFunction(Agent* myAgent, Grid* myGrid, Vector2D coinPosition);
+int ASTARFunction(Agent* myAgent, pairs myUbi, Grid* myGrid, Vector2D coinPosition);
 void findNeighbors(pairs ubication, pairs* neighborhood, int maxX, int maxY, Grid* myGrid);
 void addPath(Agent* myAgent, std::vector<node> visitedNodes, Grid* myGrid);
 node getLowestCostTill(std::deque<node> frontier);
